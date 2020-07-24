@@ -78,3 +78,37 @@ class AnimationTextEdit(QtWidgets.QWidget):
         else: self.label.move(self.width(), self.label.y())
 
 
+class FileSystemWatching(QtWidgets.QWidget):
+    def __init__(self, parent, x: int, y: int, w: int, h: int):
+        super().__init__(parent)
+
+        self.setGeometry(x, y, w, h);
+
+        self.fileSystem = QtWidgets.QFileSystemModel(self)
+        self.fileSystem.setRootPath(QtCore.QDir.currentPath())
+
+        self.tree = QtWidgets.QTreeView()
+        self.tree.setModel(self.fileSystem)
+        self.tree.setRootIndex(self.fileSystem.index(QtCore.QDir.currentPath()))
+        self.tree.move(200, 0)
+        self.tree.setAnimated(False)
+        self.tree.setIndentation(5)
+        self.tree.setSortingEnabled(True)
+        self.tree.setHeaderHidden(True)
+        self.tree.setStyleSheet("""
+            color: white;
+            background-color: black;
+        """)
+
+        self.windowLayout = QtWidgets.QVBoxLayout()
+        self.windowLayout.addWidget(self.tree)
+        self.setLayout(self.windowLayout)
+
+        self.tree.doubleClicked.connect(self.GetFile)
+
+    def GetFile(self, signal):
+        if (not self.fileSystem.isDir(signal)):
+            file_path = self.fileSystem.filePath(signal)
+            print(file_path[-5:] == "gcode")
+
+

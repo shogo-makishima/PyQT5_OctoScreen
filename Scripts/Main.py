@@ -4,6 +4,7 @@ from Scripts.UI.Menu import Menu
 from Scripts.UI.MainPage import MainPage
 from Scripts.UI.LedSwitch import LedSwitch
 from Scripts.UI.ColorScheme import ColorScheme
+from Scripts.UI.PrintFile import PrintFile
 
 class Main(QtWidgets.QWidget):
     def __init__(self):
@@ -14,6 +15,7 @@ class Main(QtWidgets.QWidget):
             MainPage(self),
             LedSwitch(self),
             ColorScheme(self),
+            PrintFile(self),
         ]
 
         font = QtGui.QFont("Trench", 30)

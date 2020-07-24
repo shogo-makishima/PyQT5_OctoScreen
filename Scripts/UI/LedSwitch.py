@@ -16,7 +16,6 @@ class LedSwitch(Menu):
         self.ledON = DefaultButton(self, "LedON", 0, 0, 100, 100, "ON", lambda: self.LedChangeState(True))
         self.ledOFF = DefaultButton(self, "LedOFF", 300, 0, 100, 100, "OFF", lambda: self.LedChangeState(False))
 
-
     def LedChangeState(self, state: bool = False):
         Settings.SETTINGS.LED_STATUS = state
         print(f"[LED][CURRENT] {Settings.SETTINGS.LED_STATUS}")
