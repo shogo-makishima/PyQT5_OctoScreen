@@ -5,9 +5,13 @@ from Scripts.UI.MainPage import MainPage
 from Scripts.UI.LedSwitch import LedSwitch
 from Scripts.UI.ColorScheme import ColorScheme
 from Scripts.UI.PrintFile import PrintFile
+from Scripts.UI.PrintingMenu import PrintingMenu
+from Scripts.API.OctoPrintAPI import OctoPrintAPI, COMMANDS
 
 class Main(QtWidgets.QWidget):
     def __init__(self):
+        self.Start()
+
         super().__init__()
 
         self.ListMenus: Menu = [
@@ -16,6 +20,7 @@ class Main(QtWidgets.QWidget):
             LedSwitch(self),
             ColorScheme(self),
             PrintFile(self),
+            PrintingMenu(self),
         ]
 
         font = QtGui.QFont("Trench", 30)
@@ -27,10 +32,28 @@ class Main(QtWidgets.QWidget):
         self.currentMenu: Menu = self.GetMenuByName("MainPage")
         print(f"[MENU][CURRENT] {self.currentMenu.name}")
 
+        self.timer = QtCore.QTimer(self)
+        self.timer.start(Settings.UPDATE_PAUSE)
+        self.timer.timeout.connect(lambda: self.UpdateChildMenu())
+
         self.setStyleSheet("background-color: black;")
         # self.setStyleSheet("background-image: url(Files/Images/UI/Logo.png);")
 
         self.Update()
+
+    def Start(self):
+        OctoPrintAPI.Login(OctoPrintAPI)
+        self.UpdateState()
+
+    def UpdateState(self):
+        OctoPrintAPI.GetTemperaturePrinterState(OctoPrintAPI)
+
+        OctoPrintAPI.GetJob(OctoPrintAPI)
+        # if (temp_stateJob != None):  Settings.DYNAMIC_VARIABLES.JobStatus = OctoPrintAPI.GetStateJob(OctoPrintAPI)
+
+    def UpdateChildMenu(self):
+        self.UpdateState()
+        self.currentMenu.Update()
 
     def Update(self):
         for menu in self.ListMenus:

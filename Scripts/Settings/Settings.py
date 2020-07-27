@@ -1,4 +1,5 @@
 WINDOW_SIZE = (400, 300)
+UPDATE_PAUSE = 1000
 
 class SETTINGS:
     LED_STATUS: bool = False
@@ -24,3 +25,6 @@ class COLOR_PRESETS:
     RED = "RED"
     WHITE = "WHITE"
     OFF = "OFF"
+
+class DYNAMIC_VARIABLES:
+    JobStatus: str = "Offline"

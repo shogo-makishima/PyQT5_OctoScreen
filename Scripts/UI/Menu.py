@@ -30,6 +30,38 @@ class DefaultButton(QtWidgets.QPushButton):
         self.setStyleSheet(StyleSheets.GenerateButtonStyleSheet(name, 20))
 
 
+class DefaultParameter(QtWidgets.QWidget):
+    def __init__(self, parent, name: str, x: int, y: int, w: int, h: int, text: str, offset: tuple = (10, 20), fontSize: int = 15, fontFamily: str = "Trench"):
+        super().__init__(parent)
+
+        self.setGeometry(QtCore.QRect(x, y, w, h))
+        self.setObjectName(name)
+        self.offset = offset
+
+        self.label = QtWidgets.QLabel(self);
+        self.label.setAttribute(QtCore.Qt.WA_StyledBackground, False)
+        self.label.setStyleSheet(f"""
+            color: rgb(255, 255, 255);
+            background-color: rgba(255, 255, 128, 0);
+            font-size: {fontSize}pt;
+            font-family: {fontFamily};
+        """)
+
+        self.setAttribute(QtCore.Qt.WA_StyledBackground, True)
+        self.setStyleSheet(f"""
+            #{self.objectName()} {{
+                background-image: url(Files/Images/UI/Button_Empty.png);
+                background-repeat: no-repeat;
+            }}
+        """)
+
+    def SetText(self, text: str = "None"):
+        self.label.clear()
+        self.label.setText(text)
+        self.label.adjustSize()
+        self.label.move(self.offset[0], self.offset[1])
+
+
 class Rect(QtWidgets.QWidget):
     def __init__(self, parent, x: int, y: int, w: int, h: int):
         super(Rect, self).__init__(parent)
@@ -48,6 +80,7 @@ class AnimationTextEdit(QtWidgets.QWidget):
 
         self.label = QtWidgets.QLabel(self.rectLabel);
         self.label.setText(text)
+        # self.label.adjustSize()
 
         self.label.setAttribute(QtCore.Qt.WA_StyledBackground, False)
         self.label.setStyleSheet(f"""
@@ -71,6 +104,13 @@ class AnimationTextEdit(QtWidgets.QWidget):
         self.timer = QtCore.QTimer(self)
         self.timer.start(self.pause)
         self.timer.timeout.connect(lambda: self.Moving())
+
+        self.SetText(text)
+
+    def SetText(self, text: str = "None"):
+        self.label.clear()
+        self.label.setText(text)
+        self.label.adjustSize()
 
     def Moving(self):
         if (self.label.x() >= 0 - self.label.width()):
@@ -112,3 +152,41 @@ class FileSystemWatching(QtWidgets.QWidget):
             print(file_path[-5:] == "gcode")
 
 
+class StaticText(QtWidgets.QWidget):
+    def __init__(self, parent, x: int, y: int, w: int, h: int, text: str, offset: tuple = (20, 14), fontSize: int = 15, fontFamily: str = "Trench"):
+        super(StaticText, self).__init__(parent)
+
+        self.setGeometry(x, y, w, h);
+
+        self.setObjectName("StaticText")
+
+        self.rectLabel = Rect(self, 0 + offset[0], 0 + offset[1], w - offset[0] * 2, h - offset[1] * 2)
+
+        self.label = QtWidgets.QLabel(self);
+        self.label.setText(text)
+        self.label.adjustSize()
+
+        self.label.setAttribute(QtCore.Qt.WA_StyledBackground, False)
+        self.label.setStyleSheet(f"""
+            color: rgb(255, 255, 255);
+            background-color: rgba(255, 255, 128, 0);
+            font-size: {fontSize}pt;
+            font-family: {fontFamily};
+        """)
+
+        self.setAttribute(QtCore.Qt.WA_StyledBackground, True)
+        self.setStyleSheet(f"""
+            #{self.objectName()} {{
+                background-image: url(Files/Images/UI/InformationBar_5X1.png);
+                background-repeat: no-repeat;
+            }}
+        """)
+
+        self.offset = offset
+        self.label.move(offset[0], offset[1])
+
+    def SetText(self, text: str = "None"):
+        self.label.clear()
+        self.label.setText(text)
+        self.label.adjustSize()
+        self.label.move(self.offset[0], self.offset[1])
