@@ -1,11 +1,13 @@
 from PyQt5 import QtGui, QtCore, QtWidgets
 import Scripts.Settings.Settings as Settings
+import asyncio
 from Scripts.UI.Menu import Menu
 from Scripts.UI.MainPage import MainPage
 from Scripts.UI.LedSwitch import LedSwitch
 from Scripts.UI.ColorScheme import ColorScheme
 from Scripts.UI.PrintFile import PrintFile
 from Scripts.UI.PrintingMenu import PrintingMenu
+from Scripts.UI.MovingMenu import MovingMenu
 from Scripts.API.OctoPrintAPI import OctoPrintAPI, COMMANDS
 
 class Main(QtWidgets.QWidget):
@@ -21,6 +23,7 @@ class Main(QtWidgets.QWidget):
             ColorScheme(self),
             PrintFile(self),
             PrintingMenu(self),
+            MovingMenu(self),
         ]
 
         font = QtGui.QFont("Trench", 30)
@@ -43,12 +46,14 @@ class Main(QtWidgets.QWidget):
 
     def Start(self):
         OctoPrintAPI.Login(OctoPrintAPI)
+        OctoPrintAPI.GetProfiles(OctoPrintAPI)
+        # OctoPrintAPI.GetSettings(OctoPrintAPI)
         self.UpdateState()
 
     def UpdateState(self):
-        OctoPrintAPI.GetTemperaturePrinterState(OctoPrintAPI)
-
-        OctoPrintAPI.GetJob(OctoPrintAPI)
+        if (not OctoPrintAPI.CheckConnection(OctoPrintAPI) in ["Connecting", "Close"]):
+            OctoPrintAPI.GetJob(OctoPrintAPI)
+        else: pass
         # if (temp_stateJob != None):  Settings.DYNAMIC_VARIABLES.JobStatus = OctoPrintAPI.GetStateJob(OctoPrintAPI)
 
     def UpdateChildMenu(self):
@@ -79,9 +84,4 @@ class Main(QtWidgets.QWidget):
 
 
 """
-def thread(func):
-    def wrapper(*args, **kwargs):
-        thread = threading.Thread(target=func, args=args, kwargs=kwargs)
-        thread.start()
-    return wrapper
 """

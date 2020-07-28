@@ -36,7 +36,11 @@ class PrintingMenu(Menu):
         self.parameterTool0.SetText(f"T0\n{OctoPrintAPI.TOOLS['tool0'].actual}°C\n{OctoPrintAPI.TOOLS['tool0'].target}°C")
         self.parameterBed.SetText(f"BED\n{OctoPrintAPI.TOOLS['bed'].actual}°C\n{OctoPrintAPI.TOOLS['bed'].target}°C")
         self.parameterChamber.SetText(f"CHAM\n{OctoPrintAPI.TOOLS['chamber'].actual}°C\n{OctoPrintAPI.TOOLS['chamber'].target}°C")
-        self.parameterProgress.SetText(f"PERS\n{round(OctoPrintAPI.JOB.progress.completion, 1)}%\n{OctoPrintAPI.JOB.progress.printTime // 60}m/{OctoPrintAPI.JOB.progress.printTimeLeft // 60}m")
+
+        if (OctoPrintAPI.JOB.progress.completion != None):
+            self.parameterProgress.SetText(f"PERS\n{round(OctoPrintAPI.JOB.progress.completion, 1)}%\n{OctoPrintAPI.JOB.progress.printTime // 60}m/{OctoPrintAPI.JOB.progress.printTimeLeft // 60}m")
+        else:
+            self.parameterProgress.SetText(f"PERS\nN%\nNm/Nm")
 
         self.statusBar.SetText(f"[STATUS] {OctoPrintAPI.JOB.state}")
 
