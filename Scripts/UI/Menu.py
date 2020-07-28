@@ -119,7 +119,7 @@ class AnimationTextEdit(QtWidgets.QWidget):
 
 
 class FileSystemWatching(QtWidgets.QWidget):
-    def __init__(self, parent, x: int, y: int, w: int, h: int):
+    def __init__(self, parent, x: int, y: int, w: int, h: int, func):
         super().__init__(parent)
 
         self.setGeometry(x, y, w, h);
@@ -144,7 +144,7 @@ class FileSystemWatching(QtWidgets.QWidget):
         self.windowLayout.addWidget(self.tree)
         self.setLayout(self.windowLayout)
 
-        self.tree.doubleClicked.connect(self.GetFile)
+        self.tree.doubleClicked.connect(func)
 
     def GetFile(self, signal):
         if (not self.fileSystem.isDir(signal)):

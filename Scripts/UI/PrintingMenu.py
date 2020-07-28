@@ -27,6 +27,8 @@ class PrintingMenu(Menu):
         self.resume = DefaultButton(self, "Resume", 0, 100, 100, 100, "Resume", lambda: OctoPrintAPI.SetJob(OctoPrintAPI, COMMANDS.PAUSE, COMMANDS.ACTION.RESUME))
         self.pause = DefaultButton(self, "Pause", 100, 100, 100, 100, "Pause", lambda: OctoPrintAPI.SetJob(OctoPrintAPI, COMMANDS.PAUSE, COMMANDS.ACTION.PAUSE))
 
+        self.pause = DefaultButton(self, "Cancel", 200, 100, 100, 100, "Cancel", lambda: OctoPrintAPI.SetJob(OctoPrintAPI, COMMANDS.CANCEL, COMMANDS.ACTION.EMPTY))
+
         self.Update()
         # self.color = DefaultButton(self, "ColorScheme", 100, 0, 100, 100, "Color", lambda: parent.ChangeMenu("ColorScheme"))
         # self.printFile = DefaultButton(self, "PrintFile", 200, 0, 100, 100, "Print", lambda: parent.ChangeMenu("PrintFile"))

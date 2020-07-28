@@ -67,11 +67,12 @@ class Main(QtWidgets.QWidget):
         # self.currentMenu.Update()
         self.show()
 
-    def ChangeMenu(self, name: str = "Menu"):
-        self.currentMenu: Menu = self.GetMenuByName(name)
-        print(f"[MENU][CURRENT] {self.currentMenu.name}")
+    def ChangeMenu(self, name: str = "Menu", parameter: bool = True):
+        if (parameter):
+            self.currentMenu: Menu = self.GetMenuByName(name)
+            print(f"[MENU][CURRENT] {self.currentMenu.name}")
 
-        self.Update()
+            self.Update()
 
     def GetMenuByName(self, name: str = "Default") -> Menu:
         for menu in self.ListMenus:

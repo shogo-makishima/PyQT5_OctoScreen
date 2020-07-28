@@ -17,10 +17,10 @@ class MainPage(Menu):
 
         self.led = DefaultButton(self, "LedSwitch", 0, 0, 100, 100, "Led", lambda: parent.ChangeMenu("LedSwitch"))
         self.color = DefaultButton(self, "ColorScheme", 100, 0, 100, 100, "Color", lambda: parent.ChangeMenu("ColorScheme"))
-        self.printFile = DefaultButton(self, "PrintFile", 200, 0, 100, 100, "Print", lambda: parent.ChangeMenu("PrintFile"))
+        self.printFile = DefaultButton(self, "PrintFile", 200, 0, 100, 100, "Print", lambda: parent.ChangeMenu("PrintFile", OctoPrintAPI.JOB.state == "Operational"))
         self.printingMenu = DefaultButton(self, "PrintingMenu", 300, 0, 100, 100, "Printing", lambda: parent.ChangeMenu("PrintingMenu"))
 
-        self.printingMenu = DefaultButton(self, "MovingMenu", 0, 100, 100, 100, "Move", lambda: parent.ChangeMenu("MovingMenu"))
+        self.printingMenu = DefaultButton(self, "MovingMenu", 0, 100, 100, 100, "Move", lambda: parent.ChangeMenu("MovingMenu", OctoPrintAPI.JOB.state == "Operational"))
 
         self.Update()
         # self.files = FileSystemWatching(self, 200, 0, 200, 100)

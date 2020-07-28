@@ -221,7 +221,17 @@ class OctoPrintAPI:
 
         request = self.ConnectSession.post(f"{self.URL}/api/printer/printhead", data=json.dumps(data), headers=self.HEADERS)
 
-    """
+    @Thread
+    def SelectFile(self, filename, print=True):
+        data = {
+            "command": "select",
+            "print": print,
+        }
+
+        request = self.ConnectSession.post(f"{self.URL}/api/files/{filename}", data=json.dumps(data), headers=self.HEADERS)
+
+
+"""
     def GetTemperaturePrinterState(self) -> None:
         data = self.GetPrinterState(self)["temperature"]
         for key in data.keys():
