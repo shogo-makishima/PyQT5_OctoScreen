@@ -119,7 +119,7 @@ class AnimationTextEdit(QtWidgets.QWidget):
 
 
 class FileSystemWatching(QtWidgets.QWidget):
-    def __init__(self, parent, x: int, y: int, w: int, h: int, func):
+    def __init__(self, parent, x: int, y: int, w: int, h: int, func, rootPath=QtCore.QDir.currentPath()):
         super().__init__(parent)
 
         self.setGeometry(x, y, w, h);
@@ -129,7 +129,7 @@ class FileSystemWatching(QtWidgets.QWidget):
 
         self.tree = QtWidgets.QTreeView()
         self.tree.setModel(self.fileSystem)
-        self.tree.setRootIndex(self.fileSystem.index(QtCore.QDir.currentPath()))
+        self.tree.setRootIndex(self.fileSystem.index(rootPath))
         self.tree.move(200, 0)
         self.tree.setAnimated(False)
         self.tree.setIndentation(5)
@@ -145,11 +145,6 @@ class FileSystemWatching(QtWidgets.QWidget):
         self.setLayout(self.windowLayout)
 
         self.tree.doubleClicked.connect(func)
-
-    def GetFile(self, signal):
-        if (not self.fileSystem.isDir(signal)):
-            file_path = self.fileSystem.filePath(signal)
-            print(file_path[-5:] == "gcode")
 
 
 class StaticText(QtWidgets.QWidget):
@@ -190,3 +185,75 @@ class StaticText(QtWidgets.QWidget):
         self.label.setText(text)
         self.label.adjustSize()
         self.label.move(self.offset[0], self.offset[1])
+
+class ListWidget(QtWidgets.QWidget):
+    def __init__(self, parent, name, x: int, y: int, w: int, h: int, func, fontSize: int = 15, fontFamily: str = "Trench"):
+        super(ListWidget, self).__init__(parent)
+
+        self.setGeometry(x, y, w, h);
+        self.setObjectName(name)
+
+        self.gridLayout = QtWidgets.QGridLayout(self)
+        self.listView = QtWidgets.QListView(self)
+        self.listView.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        self.listView.doubleClicked.connect(func)
+
+        self.model = QtGui.QStandardItemModel()
+        self.listView.setModel(self.model)
+
+        self.SetItems(["Empty"])
+
+        self.listView.setStyleSheet(f"""
+            color: rgb(255, 255, 255);
+            background-color: rgba(255, 255, 128, 0);
+            font-size: {fontSize}pt;
+            font-family: {fontFamily};
+        """)
+
+        self.gridLayout.addWidget(self.listView, 1, 0, 1, 2)
+
+    def SetItems(self, items):
+        self.model.clear()
+
+        for i in items:
+            item = QtGui.QStandardItem(i)
+            self.model.appendRow(item)
+
+
+class TextEdit(QtWidgets.QWidget):
+    def __init__(self, parent, x: int, y: int, w: int, h: int, placeHolderText: str, defaultText: str = "", offset: tuple = (5, 5), fontSize: int = 15, fontFamily: str = "Trench"):
+        super(TextEdit, self).__init__(parent)
+
+        self.setGeometry(x, y, w, h);
+
+        self.setObjectName("TextEdit")
+
+        self.rectLabel = Rect(self, 0 + offset[0], 0 + offset[1], w - offset[0] * 2, h - offset[1] * 2)
+
+        self.label = QtWidgets.QLineEdit(self.rectLabel);
+        self.label.setGeometry(0 + offset[0], 0 + offset[1], w - offset[0] * 2 - 10, h - offset[1] * 2 - 15)
+
+        self.label.setPlaceholderText(placeHolderText)
+        self.label.setText(defaultText)
+
+        # self.label.setGeometry()
+
+        self.label.setAttribute(QtCore.Qt.WA_StyledBackground, False)
+        self.label.setStyleSheet(f"""
+            color: rgb(255, 255, 255);
+            background-color: rgba(255, 255, 128, 0);
+            border: none;
+            font-size: {fontSize}pt;
+            font-family: {fontFamily};
+        """)
+
+        self.setAttribute(QtCore.Qt.WA_StyledBackground, True)
+        self.setStyleSheet(f"""
+            #{self.objectName()} {{
+                background-image: url(Files/Images/UI/InformationBar_5X1.png);
+                background-repeat: no-repeat;
+            }}
+        """)
+
+        self.offset = offset
+        self.label.move(offset[0], offset[1])

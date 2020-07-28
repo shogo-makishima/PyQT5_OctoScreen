@@ -1,4 +1,4 @@
-import requests, json, threading
+import requests, json, threading, os
 
 class COMMANDS:
     START = "start"
@@ -25,8 +25,8 @@ class Tool:
         self.offset = offset
 
 class File:
-    def __init__(self, filename, origin, size, date):
-        self.filename = filename; self.origin = origin; self.size = size; self.date = date
+    def __init__(self, filename, origin, size, date, filePath=None):
+        self.filename = filename; self.origin = origin; self.size = size; self.date = date; self.filePath = filePath
 
 class Filament:
     def __init__(self, length, volume):
@@ -67,6 +67,10 @@ class Profile:
     def __init__(self, id, name, color, model, default, current, resource, volume, heatedBed, heatedChamber, axes, extruder):
         self.id, self.name, self.color, self.model, self.default, self.current, self.resource, self.volume, self.heatedBed, self.heatedChamber, self.axes, self.extruder = id, name, color, model, default, current, resource, volume, heatedBed, heatedChamber, axes, extruder
 
+class Preset:
+    def __init__(self, name, temperatureBed, temperatureT0, temperatureT1):
+        self.name, self.temperatureBed, self.temperatureT0, self.temperatureT1 = name, temperatureBed, temperatureT0, temperatureT1
+
 
 class OctoPrintAPI:
     # API_KEY: str = None
@@ -75,7 +79,9 @@ class OctoPrintAPI:
     User: str = "Toma Kozaburo"
     Password: str = "1234567890"
 
-    IS_Online: bool = False
+    PRESETS: dict = {
+
+    }
 
     TOOLS: dict = {
         "tool0": Tool(0, 0, 0),
@@ -83,6 +89,10 @@ class OctoPrintAPI:
         "bed": Tool(0, 0, 0),
         "chamber": Tool(0, 0, 0),
     }
+
+    FILES: list = [
+
+    ]
 
     PROFILES: dict = {
 
@@ -103,6 +113,45 @@ class OctoPrintAPI:
 
     StateJob: str = None
     ConnectSession: requests.Session = requests.Session()
+
+    def LoadPresets(self) -> None:
+        self.PRESETS.clear()
+
+        presets = list(filter(lambda x: x if (x.rsplit(".", 1)[-1] in ["preset", "json"]) else None, os.listdir(f"{os.getcwd()}/Files/Presets")))
+        for preset in presets:
+            with open(f"Files/Presets/{preset}", "r") as filePreset:
+                try:
+                    data = json.load(filePreset)
+                    self.PRESETS[data["name"]] = Preset(
+                        data["name"],
+                        data["temperatureBed"],
+                        data["temperatureT0"],
+                        data["temperatureT1"],
+                    )
+                except Exception as exception: print(exception)
+
+    @Thread
+    def CreatePreset(self, name, temperatureBed, temperatureT0, temperatureT1):
+        with open(f"Files/Presets/{name}.preset", "w") as filePreset:
+            try:
+                data = {
+                    "name": name,
+                    "temperatureBed": temperatureBed,
+                    "temperatureT0": temperatureT0,
+                    "temperatureT1": temperatureT1,
+                }
+
+                filePreset.write(json.dumps(data))
+
+                self.PRESETS[name] = Preset(
+                    name,
+                    temperatureBed,
+                    temperatureT0,
+                    temperatureT1
+                )
+            except Exception as exception:
+                print(exception)
+
 
     @Thread
     def Login(self) -> None:
@@ -154,16 +203,7 @@ class OctoPrintAPI:
             self.JOB.progress.printTimeLeft = data["progress"]["printTimeLeft"]
 
             self.JOB.state = data["state"]
-        except: pass
-
-    @Thread
-    def SetJob(self, command: str = COMMANDS.PAUSE, action: str = COMMANDS.ACTION.EMPTY) -> None:
-        data = {
-            "command": command,
-            "action": action,
-        }
-
-        request = self.ConnectSession.post(f"{self.URL}/api/job", data=json.dumps(data), headers=self.HEADERS)
+        except Exception as exception: print(exception)
 
     @Thread
     def GetProfiles(self):
@@ -196,8 +236,59 @@ class OctoPrintAPI:
     def GetSettings(self):
         try:
             data = self.ConnectSession.get(f"{self.URL}/api/settings")
-            print(data)
+            print(data.text)
         except: pass
+
+    @Thread
+    def GetAllFiles(self):
+        try:
+            request = self.ConnectSession.get(f"{self.URL}/api/files")
+            self.FILES.clear()
+
+            for file in request.json()["files"]:
+                if (file.get("children") == None):
+                    self.FILES.append(File(file["name"], file["origin"], file["size"], file["date"], file["path"]))
+                else:
+                    for fileChild in file["children"]:
+                        self.FILES.append(File(fileChild["name"], fileChild["origin"], fileChild["size"], fileChild["date"], fileChild["path"]))
+        except: pass
+        # print([file.filePath for file in self.FILES])
+
+    @Thread
+    def GetTemperaturePrinterState(self) -> None:
+        try:
+            data = self.ConnectSession.get(f"{self.URL}/api/printer", headers=self.HEADERS).json()["temperature"]
+            for key in data.keys():
+                self.TOOLS[key] = Tool(data[key]["actual"], data[key]["target"], data[key]["offset"])
+        except:
+            pass
+
+    @Thread
+    def GetChamberPrinterState(self) -> None:
+        try:
+            request = self.ConnectSession.get(f"{self.URL}/api/printer/chamber", headers=self.HEADERS)
+            if (request.status_code == 200):
+                self.TOOLS["chamber"] = data["actual"], data["target"], data["offset"]
+        except:
+            pass
+
+    @Thread
+    def SetJob(self, command: str = COMMANDS.PAUSE, action: str = COMMANDS.ACTION.EMPTY) -> None:
+        data = {
+            "command": command,
+            "action": action,
+        }
+
+        request = self.ConnectSession.post(f"{self.URL}/api/job", data=json.dumps(data), headers=self.HEADERS)
+
+    @Thread
+    def SetHomePrintHead(self, axes=["x", "y", "z"]):
+        data = {
+            "command": "home",
+            "axes": axes,
+        }
+
+        request = self.ConnectSession.post(f"{self.URL}/api/printer/printhead", data=json.dumps(data), headers=self.HEADERS)
 
     @Thread
     def SetJogPrintHead(self, x, y, z, absolute=False, speed=6000):
@@ -212,14 +303,6 @@ class OctoPrintAPI:
 
         request = self.ConnectSession.post(f"{self.URL}/api/printer/printhead", data=json.dumps(data), headers=self.HEADERS)
 
-    @Thread
-    def SetHomePrintHead(self, axes=["x", "y", "z"]):
-        data = {
-            "command": "home",
-            "axes": axes,
-        }
-
-        request = self.ConnectSession.post(f"{self.URL}/api/printer/printhead", data=json.dumps(data), headers=self.HEADERS)
 
     @Thread
     def SelectFile(self, filename, print=True):
@@ -228,8 +311,22 @@ class OctoPrintAPI:
             "print": print,
         }
 
-        request = self.ConnectSession.post(f"{self.URL}/api/files/{filename}", data=json.dumps(data), headers=self.HEADERS)
+        request = self.ConnectSession.post(f"{self.URL}/api/files/local/{filename}", data=json.dumps(data), headers=self.HEADERS)
 
+    @Thread
+    def SetToolTemperature(self, tool0, tool1=None, offset=True):
+        data = {
+            "command": "offset" if (offset) else "target",
+            "offsets" if (offset) else "targets": {
+                # "tool0": tool0,
+                # "tool1": tool1,
+            },
+        }
+
+        if (tool0 != None): data["offsets" if (offset) else "targets"]["tool0"] = tool0
+        if (tool1 != None): data["offsets" if (offset) else "targets"]["tool1"] = tool0
+
+        request = self.ConnectSession.post(f"{self.URL}/api/printer/tool", data=json.dumps(data), headers=self.HEADERS)
 
 """
     def GetTemperaturePrinterState(self) -> None:

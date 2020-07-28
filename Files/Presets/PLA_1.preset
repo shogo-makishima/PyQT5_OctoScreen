@@ -1,0 +1,6 @@
+{
+    "name": "PLA_1",
+    "temperatureBed": 65,
+    "temperatureT0": 200,
+    "temperatureT1": null
+}

@@ -8,7 +8,9 @@ from Scripts.UI.ColorScheme import ColorScheme
 from Scripts.UI.PrintFile import PrintFile
 from Scripts.UI.PrintingMenu import PrintingMenu
 from Scripts.UI.MovingMenu import MovingMenu
-from Scripts.API.OctoPrintAPI import OctoPrintAPI, COMMANDS
+from Scripts.UI.TemperatureMenu import TemperatureMenu
+from Scripts.UI.PresetsMenu import PresetsMenu, CreatePresetsMenu
+from Scripts.API.OctoPrintAPI import OctoPrintAPI, COMMANDS, Profile
 
 class Main(QtWidgets.QWidget):
     def __init__(self):
@@ -24,6 +26,9 @@ class Main(QtWidgets.QWidget):
             PrintFile(self),
             PrintingMenu(self),
             MovingMenu(self),
+            TemperatureMenu(self),
+            PresetsMenu(self),
+            CreatePresetsMenu(self),
         ]
 
         font = QtGui.QFont("Trench", 30)
@@ -47,6 +52,8 @@ class Main(QtWidgets.QWidget):
     def Start(self):
         OctoPrintAPI.Login(OctoPrintAPI)
         OctoPrintAPI.GetProfiles(OctoPrintAPI)
+        OctoPrintAPI.LoadPresets(OctoPrintAPI)
+
         # OctoPrintAPI.GetSettings(OctoPrintAPI)
         self.UpdateState()
 
@@ -54,6 +61,17 @@ class Main(QtWidgets.QWidget):
         if (not OctoPrintAPI.CheckConnection(OctoPrintAPI) in ["Connecting", "Close"]):
             OctoPrintAPI.GetJob(OctoPrintAPI)
         else: pass
+
+        # OctoPrintAPI.GetSettings(OctoPrintAPI)
+        OctoPrintAPI.GetAllFiles(OctoPrintAPI)
+        OctoPrintAPI.GetProfiles(OctoPrintAPI)
+        OctoPrintAPI.GetTemperaturePrinterState(OctoPrintAPI)
+
+        # OctoPrintAPI.GetSettings(OctoPrintAPI)
+
+        # try:
+            # profile: Profile = OctoPrintAPI.PROFILES["Duplicator i3 Mini"]
+        # except: pass
         # if (temp_stateJob != None):  Settings.DYNAMIC_VARIABLES.JobStatus = OctoPrintAPI.GetStateJob(OctoPrintAPI)
 
     def UpdateChildMenu(self):
