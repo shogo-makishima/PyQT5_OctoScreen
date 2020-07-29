@@ -23,7 +23,7 @@ class PrintingMenu(Menu):
         # self.progressBar = QtWidgets.QProgressBar(self)
         # self.progressBar.setGeometry(0, 260, 450, 30)
 
-        self.menu = DefaultButton(self, "Back", 300, 100, 100, 100, "Back", lambda: parent.ChangeMenu("MainPage"))
+        self.menu = DefaultButton(self, "Back", 300, 100, 100, 100, "Back", lambda: parent.ChangeMenu(self.lastMenuName, isBack=True))
         self.resume = DefaultButton(self, "Resume", 0, 100, 100, 100, "Resume", lambda: OctoPrintAPI.SetJob(OctoPrintAPI, COMMANDS.PAUSE, COMMANDS.ACTION.RESUME))
         self.pause = DefaultButton(self, "Pause", 100, 100, 100, 100, "Pause", lambda: OctoPrintAPI.SetJob(OctoPrintAPI, COMMANDS.PAUSE, COMMANDS.ACTION.PAUSE))
 

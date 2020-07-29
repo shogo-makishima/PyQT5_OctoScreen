@@ -85,12 +85,18 @@ class Main(QtWidgets.QWidget):
         # self.currentMenu.Update()
         self.show()
 
-    def ChangeMenu(self, name: str = "Menu", parameter: bool = True):
+    def ChangeMenu(self, name: str = "Menu", parameter: bool = True, isBack = False):
         if (parameter):
+            t_lastMenuName = self.currentMenu.name
+            # print(self.currentMenu.lastMenuName)
             self.currentMenu: Menu = self.GetMenuByName(name)
             print(f"[MENU][CURRENT] {self.currentMenu.name}")
 
+            self.currentMenu.Start()
             self.Update()
+
+            if (not isBack):
+                self.currentMenu.lastMenuName = t_lastMenuName
 
     def GetMenuByName(self, name: str = "Default") -> Menu:
         for menu in self.ListMenus:

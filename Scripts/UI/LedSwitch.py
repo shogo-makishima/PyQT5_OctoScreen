@@ -12,7 +12,7 @@ class LedSwitch(Menu):
         self.setObjectName(self.name)
         self.setFixedSize(Settings.WINDOW_SIZE[0], Settings.WINDOW_SIZE[1])
 
-        self.menu = DefaultButton(self, "Back", 300, 200, 100, 100, "Back", lambda: parent.ChangeMenu("MainPage"))
+        self.menu = DefaultButton(self, "Back", 300, 200, 100, 100, "Back", lambda: parent.ChangeMenu(self.lastMenuName, isBack=True))
         self.ledON = DefaultButton(self, "LedON", 0, 0, 100, 100, "ON", lambda: self.LedChangeState(True))
         self.ledOFF = DefaultButton(self, "LedOFF", 300, 0, 100, 100, "OFF", lambda: self.LedChangeState(False))
 
@@ -21,4 +21,5 @@ class LedSwitch(Menu):
         print(f"[LED][CURRENT] {Settings.SETTINGS.LED_STATUS}")
 
     def Update(self):
-        print(self.parentMenu.currentMenu.name)
+        pass
+        # print(self.parentMenu.currentMenu.name)

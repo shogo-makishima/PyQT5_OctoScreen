@@ -17,7 +17,7 @@ class TemperatureMenu(Menu):
         self.parameterBed = DefaultParameter(self, "Bed", 100, 0, 100, 100, "Back")
         # self.parameterChamber = DefaultParameter(self, "Chamber", 200, 0, 100, 100, "Back")
 
-        self.menu = DefaultButton(self, "Back", 300, 100, 100, 100, "Back", lambda: parent.ChangeMenu("MainPage"))
+        self.menu = DefaultButton(self, "Back", 300, 100, 100, 100, "Back", lambda: parent.ChangeMenu(self.lastMenuName, isBack=True))
 
         self.tool0Plus = DefaultButton(self, "t0plus", 0, 100, 100, 100, "T0+", lambda: OctoPrintAPI.SetToolTemperature(OctoPrintAPI, OctoPrintAPI.TOOLS["tool0"].target + 5, None, False))
         self.tool0Minus = DefaultButton(self, "t0minus", 0, 200, 100, 100, "T0-", lambda: OctoPrintAPI.SetToolTemperature(OctoPrintAPI, OctoPrintAPI.TOOLS["tool0"].target - 5, None, False))

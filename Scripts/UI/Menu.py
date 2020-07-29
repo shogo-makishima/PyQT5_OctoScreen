@@ -5,9 +5,13 @@ import Scripts.Settings.StyleSheets as StyleSheets
 class Menu(QtWidgets.QWidget):
     name = "Default"
 
-    def __init__(self, parent):
+    def __init__(self, parent, name = None):
         super(Menu, self).__init__(parent)
+
+        self.lastMenuName = "MainPage"
+
         self.parentMenu = parent
+        if (name != None): self.name = name
 
         self.setObjectName(self.name)
         self.setFixedSize(Settings.WINDOW_SIZE[0], Settings.WINDOW_SIZE[1])
@@ -15,6 +19,9 @@ class Menu(QtWidgets.QWidget):
         # super(Menu, self).__init__()
 
         # self.setStyleSheet("#MainWindow {background-image: url(Files/Images/Logo.png);}")
+
+    def Start(self):
+        pass
 
     def Update(self):
         pass

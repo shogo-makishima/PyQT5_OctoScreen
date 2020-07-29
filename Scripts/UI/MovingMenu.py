@@ -13,7 +13,7 @@ class MovingMenu(Menu):
         self.setObjectName(self.name)
         self.setFixedSize(Settings.WINDOW_SIZE[0], Settings.WINDOW_SIZE[1])
 
-        self.menu = DefaultButton(self, "Back", 300, 200, 100, 100, "Back", lambda: parent.ChangeMenu("MainPage"))
+        self.menu = DefaultButton(self, "Back", 300, 200, 100, 100, "Back", lambda: parent.ChangeMenu(self.lastMenuName, isBack=True))
 
         self.zPlus = DefaultButton(self, "Z", 300, 0, 100, 100, "Z+", lambda: OctoPrintAPI.SetJogPrintHead(OctoPrintAPI, 0, 0, +10))
         self.zMinus = DefaultButton(self, "Z", 300, 100, 100, 100, "Z-", lambda: OctoPrintAPI.SetJogPrintHead(OctoPrintAPI, 0, 0, -10))
@@ -28,7 +28,6 @@ class MovingMenu(Menu):
 
         self.Update()
         # self.files = FileSystemWatching(self, 200, 0, 200, 100)
-
 
     def Update(self):
         pass

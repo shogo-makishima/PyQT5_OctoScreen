@@ -13,7 +13,7 @@ class PresetsMenu(Menu):
         self.setObjectName(self.name)
         self.setFixedSize(Settings.WINDOW_SIZE[0], Settings.WINDOW_SIZE[1])
 
-        self.menu = DefaultButton(self, "Back", 300, 200, 100, 100, "Back", lambda: parent.ChangeMenu("MainPage"))
+        self.menu = DefaultButton(self, "Back", 300, 200, 100, 100, "Back", lambda: parent.ChangeMenu(self.lastMenuName, isBack=True))
         self.addPreset = DefaultButton(self, "Add", 300, 100, 100, 100, "Add", lambda: parent.ChangeMenu("CreatePresetsMenu"))
         self.updatePresets = DefaultButton(self, "Update", 300, 0, 100, 100, "Update", self.UpdatePreset)
 
@@ -50,7 +50,7 @@ class CreatePresetsMenu(Menu):
         self.i_temperatureT0 = TextEdit(self, 0, 160, 250, 50, "Temperature T0: int", "200")
         self.i_temperatureT1 = TextEdit(self, 0, 230, 250, 50, "Temperature T1: null")
 
-        self.menu = DefaultButton(self, "Back", 300, 180, 100, 100, "Back", lambda: parent.ChangeMenu("PresetsMenu"))
+        self.menu = DefaultButton(self, "Back", 300, 180, 100, 100, "Back", lambda: parent.ChangeMenu("PresetsMenu", isBack=True))
 
         self.createPreset = DefaultButton(self, "Save", 300, 20, 100, 100, "Save", self.SavePreset)
 

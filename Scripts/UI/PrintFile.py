@@ -13,7 +13,7 @@ class PrintFile(Menu):
         self.setObjectName(self.name)
         self.setFixedSize(Settings.WINDOW_SIZE[0], Settings.WINDOW_SIZE[1])
 
-        self.menu = DefaultButton(self, "Back", 300, 200, 100, 100, "Back", lambda: parent.ChangeMenu("MainPage"))
+        self.menu = DefaultButton(self, "Back", 300, 200, 100, 100, "Back", lambda: parent.ChangeMenu(self.lastMenuName, isBack=True))
 
         self.led = DefaultButton(self, "Update", 300, 0, 100, 100, "Update", self.UpdateFiles)
         # self.color = DefaultButton(self, "ColorScheme", 300, 100, 100, 100, "Color", lambda: parent.ChangeMenu("ColorScheme"))
@@ -23,6 +23,9 @@ class PrintFile(Menu):
         """
         self.files = FileSystemWatching(self, 0, 0, 300, 300, self.GetFile)
         """
+
+    def Start(self):
+        self.UpdateFiles()
 
     def GetFile(self, signal):
         file_path = self.files.model.itemFromIndex(signal).text()

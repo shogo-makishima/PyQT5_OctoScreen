@@ -12,7 +12,7 @@ class ColorScheme(Menu):
         self.setObjectName(self.name)
         self.setFixedSize(Settings.WINDOW_SIZE[0], Settings.WINDOW_SIZE[1])
 
-        self.menu = DefaultButton(self, "Back", 300, 200, 100, 100, "Back", lambda: parent.ChangeMenu("MainPage"))
+        self.menu = DefaultButton(self, "Back", 300, 200, 100, 100, "Back", lambda: parent.ChangeMenu(self.lastMenuName, isBack=True))
         self.RED = DefaultButton(self, "RED", 0, 0, 100, 100, "RED", lambda: self.ChangeColorScheme(Settings.COLOR_PRESETS.RED))
         self.WHITE = DefaultButton(self, "WHITE", 100, 0, 100, 100, "WHITE", lambda: self.ChangeColorScheme(Settings.COLOR_PRESETS.WHITE))
         self.OFF = DefaultButton(self, "OFF", 200, 0, 100, 100, "OFF", lambda: self.ChangeColorScheme(Settings.COLOR_PRESETS.OFF))
@@ -21,4 +21,5 @@ class ColorScheme(Menu):
         print(f"[COLOR][CURRENT] {name}")
 
     def Update(self):
-        print(self.parentMenu.currentMenu.name)
+        pass
+        # print(self.parentMenu.currentMenu.name)
