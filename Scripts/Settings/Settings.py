@@ -1,4 +1,4 @@
-WINDOW_SIZE = (400, 300)
+WINDOW_SIZE = (800, 600)
 UPDATE_PAUSE = 500
 
 class SETTINGS:
@@ -16,6 +16,7 @@ class GCODE:
     CLOCKWISE_MOTION = "G2"
     COUNTERCLOCKWISE_MOTION = "G3"
 
+UI_PATH = "Files/Images/OctoScreen_UI"
 
 class Color:
     def __init__(self, name: str, r: int, g: int, b: int, w: int):

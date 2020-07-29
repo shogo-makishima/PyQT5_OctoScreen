@@ -9,6 +9,8 @@ from Scripts.UI.PrintFile import PrintFile
 from Scripts.UI.PrintingMenu import PrintingMenu
 from Scripts.UI.MovingMenu import MovingMenu
 from Scripts.UI.TemperatureMenu import TemperatureMenu
+from Scripts.UI.MainMenu import MainMenu
+from Scripts.UI.NetworkMenu import NetworkMenu
 from Scripts.UI.PresetsMenu import PresetsMenu, CreatePresetsMenu
 from Scripts.API.OctoPrintAPI import OctoPrintAPI, COMMANDS, Profile
 
@@ -29,6 +31,8 @@ class Main(QtWidgets.QWidget):
             TemperatureMenu(self),
             PresetsMenu(self),
             CreatePresetsMenu(self),
+            MainMenu(self),
+            NetworkMenu(self),
         ]
 
         font = QtGui.QFont("Trench", 30)

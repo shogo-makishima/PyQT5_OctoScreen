@@ -86,6 +86,8 @@ class OctoPrintAPI:
     TOOLS: dict = {
         "tool0": Tool(0, 0, 0),
         "tool1": Tool(0, 0, 0),
+        "tool2": Tool(0, 0, 0),
+        "tool3": Tool(0, 0, 0),
         "bed": Tool(0, 0, 0),
         "chamber": Tool(0, 0, 0),
     }

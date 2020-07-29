@@ -26,16 +26,98 @@ class Menu(QtWidgets.QWidget):
     def Update(self):
         pass
 
-class DefaultButton(QtWidgets.QPushButton):
-    def __init__(self, parent, name: str, x: int, y: int, w: int, h: int, text: str, func):
+
+class DefaultButton(QtWidgets.QToolButton):
+    def __init__(self, parent, name: str, x: int, y: int, w: int, h: int, text: str, func, offset: tuple = (20, 20),fontSize: int = 15,  isButton: bool = True, imageName: str = "home", imageNameHover: str = "home", imageNamePressed: str = "home"):
         super().__init__(parent)
 
-        self.setGeometry(QtCore.QRect(x, y, w, h))
         self.setText(text)
-        self.setObjectName(name)
-        self.clicked.connect(func)
-        self.setStyleSheet(StyleSheets.GenerateButtonStyleSheet(name, 20))
 
+        self.setObjectName(name)
+
+        if (isButton): self.clicked.connect(func)
+        self.setEnabled(isButton)
+
+        self.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
+        self.setIcon(QtGui.QIcon(f"{Settings.UI_PATH}/{imageName}.png"))
+        self.setIconSize(QtCore.QSize(w - offset[0] * 2, h - offset[0] * 2))
+
+        self.setGeometry(QtCore.QRect(x, y, w, h))
+
+        self.setStyleSheet(StyleSheets.GenerateButtonStyleSheet(name, fontSize, imageName, imageNameHover, imageNamePressed))
+
+
+class DefaultButton_WithLine(QtWidgets.QToolButton):
+    def __init__(self, parent, name: str, x: int, y: int, w: int, h: int, text: str, func, color: str = "rgb(162, 37, 124)", lineOffsetW: int = 10, lineH: int = 10, offset: tuple = (20, 20),fontSize: int = 15,  isButton: bool = True, imageName: str = "home", imageNameHover: str = "home", imageNamePressed: str = "home"):
+        super().__init__(parent)
+
+        self.setText(text)
+
+        self.setObjectName(name)
+
+        if (isButton): self.clicked.connect(func)
+        self.setEnabled(isButton)
+
+        self.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
+        self.setIcon(QtGui.QIcon(f"{Settings.UI_PATH}/{imageName}.png"))
+        self.setIconSize(QtCore.QSize(w - offset[0] * 2, h - offset[0] * 2 - lineH * 2))
+
+        self.setGeometry(QtCore.QRect(x, y, w, h))
+
+        self.line = Rect(self, 0 + lineOffsetW, h - lineH, w - lineOffsetW, lineH)
+        self.line.setAttribute(QtCore.Qt.WA_StyledBackground, True)
+        self.line.setStyleSheet(f"""
+            background-color: {color};
+        """)
+        self.line.show()
+
+        self.setStyleSheet(StyleSheets.GenerateButtonStyleSheet(name, fontSize, imageName, imageNameHover, imageNamePressed))
+
+
+class TextWithIcon(QtWidgets.QToolButton):
+    def __init__(self, parent, x: int, y: int, w: int, h: int, text: str, imageName: str, textOffset: tuple = (20, 5), iconSize: tuple = (48, 32), offset: tuple = (20, 14), fontSize: int = 15, fontFamily: str = "Trench"):
+        super(TextWithIcon, self).__init__(parent)
+
+        self.setGeometry(x, y, w, h);
+
+        self.label = QtWidgets.QLabel(self);
+        self.label.setAttribute(QtCore.Qt.WA_StyledBackground, False)
+        self.label.setStyleSheet(f"""
+            color: rgb(255, 255, 255);
+            background-color: rgba(255, 255, 128, 0);
+            font-size: {fontSize}pt;
+            font-family: {fontFamily};
+        """)
+
+        self.label.move(iconSize[0] + textOffset[0], iconSize[1] / 4 + textOffset[1])
+
+        self.setObjectName("StaticText")
+        self.SetText(text)
+
+        self.setEnabled(False)
+
+        self.setAttribute(QtCore.Qt.WA_StyledBackground, False)
+        self.setStyleSheet(f"""
+            color: rgb(255, 255, 255);
+            background-color: rgba(255, 255, 128, 0);
+            font-size: {fontSize}pt;
+            font-family: {fontFamily};
+        """)
+
+        self.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)
+
+        self.setIcon(QtGui.QIcon(f"{Settings.UI_PATH}/{imageName}.png"))
+        self.setIconSize(QtCore.QSize(iconSize[0], iconSize[1]))
+        self.setGeometry(QtCore.QRect(x, y, w, h))
+
+        # self.offset = offset
+        # self.label.move(offset[0], offset[1])
+
+    def SetText(self, text: str = "None"):
+        self.label.clear()
+        self.label.setText(text)
+        self.label.adjustSize()
+        # self.move(self.offset[0], self.offset[1])
 
 class DefaultParameter(QtWidgets.QWidget):
     def __init__(self, parent, name: str, x: int, y: int, w: int, h: int, text: str, offset: tuple = (10, 20), fontSize: int = 15, fontFamily: str = "Trench"):
