@@ -1,4 +1,5 @@
-from Scripts.UI.Menu import Menu, DefaultButton, AnimationTextEdit, FileSystemWatching, DefaultButton_WithLine
+from Scripts.UI.Menu import Menu, TextEdit, DefaultButton, VirtualKeyboard, ListWidget, AnimationTextEdit, FileSystemWatching, DefaultButton_WithLine
+from Scripts.API.WiFiConnectionsAPI import WiFiConnectionAPI
 from PyQt5 import QtGui, QtCore, QtWidgets
 import Scripts.Settings.Settings as Settings
 import Scripts.Settings.StyleSheets as StyleSheets
@@ -15,6 +16,20 @@ class NetworkMenu(Menu):
 
         # self.statusBar = AnimationTextEdit(self, 75, 250, 250, 50, "", speed=1, pause=20)
         self.back = DefaultButton_WithLine(self, "Back", 600, 400, 200, 128, "Back", lambda: parent.ChangeMenu(self.lastMenuName, isBack=True), imageName="back", color="rgb(180, 223, 71)")
+        self.update = DefaultButton_WithLine(self, "Update", 575, 200, 200, 128, "Update", self.UpdateNetworks, imageName="refresh", color="rgb(221, 108, 43)")
+
+        self.networks = ListWidget(self, "Files", 0, 0, 575, 600, self.ShowWifiConnectionSettings)
+
+        self.ssidText = TextEdit(self, 0, 90, 250, 50, "SSID: null", funcEnterPressed=self.SetWifi)
+        self.ssidText.setEnabled(False)
+        self.ssidText.setHidden(True)
+
+        self.passwordText = TextEdit(self, 0, 180, 250, 50, "PASSWORD: null", funcEnterPressed=self.SetWifi)
+        self.passwordText.setEnabled(True)
+        self.passwordText.setHidden(True)
+
+        self.virtualKeyboard = VirtualKeyboard(self, 0, 290, 800, 300)
+        self.virtualKeyboard.setHidden(True)
 
         # self.led = DefaultButton(self, "LedSwitch", 0, 0, 100, 100, "Led", lambda: parent.ChangeMenu("LedSwitch"))
         # self.color = DefaultButton(self, "ColorScheme", 100, 0, 100, 100, "Color", lambda: parent.ChangeMenu("ColorScheme"))
@@ -29,6 +44,27 @@ class NetworkMenu(Menu):
 
         self.Update()
         # self.files = FileSystemWatching(self, 200, 0, 200, 100)
+
+    def Start(self):
+        self.UpdateNetworks()
+
+    def UpdateNetworks(self):
+        if (len(WiFiConnectionAPI.WIFI) != 0):
+            self.networks.SetItems([wifi for wifi in WiFiConnectionAPI.WIFI])
+
+    def SetWifi(self):
+        self.virtualKeyboard.setHidden(True)
+        self.ssidText.setHidden(True)
+        self.passwordText.setHidden(True)
+
+    def ShowWifiConnectionSettings(self, signal):
+        self.virtualKeyboard.setHidden(False)
+        self.ssidText.setHidden(False)
+        self.passwordText.setHidden(False)
+
+        network_ssid = self.networks.model.itemFromIndex(signal).text()
+        self.ssidText.label.setText(network_ssid)
+        print(network_ssid)
 
     def Update(self):
         pass

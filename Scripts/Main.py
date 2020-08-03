@@ -13,6 +13,7 @@ from Scripts.UI.MainMenu import MainMenu
 from Scripts.UI.NetworkMenu import NetworkMenu
 from Scripts.UI.PresetsMenu import PresetsMenu, CreatePresetsMenu
 from Scripts.API.OctoPrintAPI import OctoPrintAPI, COMMANDS, Profile
+from Scripts.API.WiFiConnectionsAPI import WiFiConnectionAPI
 
 class Main(QtWidgets.QWidget):
     def __init__(self):
@@ -51,6 +52,7 @@ class Main(QtWidgets.QWidget):
         self.setStyleSheet("background-color: black;")
         # self.setStyleSheet("background-image: url(Files/Images/UI/Logo.png);")
 
+        self.b_isLogin = False
         self.Update()
 
     def Start(self):
@@ -70,6 +72,8 @@ class Main(QtWidgets.QWidget):
         OctoPrintAPI.GetAllFiles(OctoPrintAPI)
         OctoPrintAPI.GetProfiles(OctoPrintAPI)
         OctoPrintAPI.GetTemperaturePrinterState(OctoPrintAPI)
+
+        WiFiConnectionAPI.GetWifiNetworks(WiFiConnectionAPI)
 
         # OctoPrintAPI.GetSettings(OctoPrintAPI)
 

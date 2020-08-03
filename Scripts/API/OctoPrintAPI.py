@@ -115,6 +115,7 @@ class OctoPrintAPI:
 
     StateJob: str = None
     ConnectSession: requests.Session = requests.Session()
+    b_isLogin: bool = False
 
     def LoadPresets(self) -> None:
         self.PRESETS.clear()
@@ -165,11 +166,13 @@ class OctoPrintAPI:
         }
 
         request = self.ConnectSession.post(f"{self.URL}/api/login", data=data)
+        self.b_isLogin = request.status_code == 200;
         print("[Debug] Login Successful" if (request.status_code == 200) else "[Debug] Login Failed")
 
     @Thread
     def Logout(self) -> None:
         request = self.ConnectSession.post(f"{self.URL}/api/logout")
+        self.b_isLogin  = request.status_code == 200;
         print("[Debug] Logout Successful" if (request.status_code == 200) else "[Debug] Logout Failed")
 
     @Thread

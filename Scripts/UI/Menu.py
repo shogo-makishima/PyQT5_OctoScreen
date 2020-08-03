@@ -310,7 +310,7 @@ class ListWidget(QtWidgets.QWidget):
 
 
 class TextEdit(QtWidgets.QWidget):
-    def __init__(self, parent, x: int, y: int, w: int, h: int, placeHolderText: str, defaultText: str = "", offset: tuple = (5, 5), fontSize: int = 15, fontFamily: str = "Trench"):
+    def __init__(self, parent, x: int, y: int, w: int, h: int, placeHolderText: str, funcEnterPressed = None, defaultText: str = "", offset: tuple = (5, 5), fontSize: int = 15, fontFamily: str = "Trench"):
         super(TextEdit, self).__init__(parent)
 
         self.setGeometry(x, y, w, h);
@@ -344,5 +344,120 @@ class TextEdit(QtWidgets.QWidget):
             }}
         """)
 
+        self.funcEnterPressed = funcEnterPressed
+
         self.offset = offset
         self.label.move(offset[0], offset[1])
+
+    def keyPressEvent(self, event):
+        # QtWidgets.QTextEdit.keyPressEvent(self, event)
+        if (event.key() == QtCore.Qt.Key_Return):
+            if (self.funcEnterPressed): self.funcEnterPressed()
+
+class KeyboardButton(QtWidgets.QPushButton):
+    def __init__(self, parent, symbol: str, func, offset: tuple = (10, 10), fontSize: int = 12, fontFamily: str = "Trench"):
+        super(KeyboardButton, self).__init__(parent)
+
+        self.setObjectName("KeyboardButton")
+
+        self.symbol = symbol
+
+        self.setText(symbol)
+
+        self.setMinimumSize(QtCore.QSize(50, 50))
+        self.setMaximumSize(QtCore.QSize(50, 50))
+
+        self.setAttribute(QtCore.Qt.WA_StyledBackground, True)
+        self.setStyleSheet(f"""
+            #{self.objectName()} {{
+                color: black;
+                background-color: rgb(250, 250, 250);
+                border: 4px solid black; /* Параметры границы */
+                border-radius: 6px;
+
+                font-weight: 500;
+                font-size: {fontSize}pt;
+                font-family: {fontFamily};
+                /*
+                background-image: url(Files/Images/UI/InformationBar_5X1.png);
+                background-repeat: no-repeat;
+                */
+            }}
+            #{self.objectName()}::hover {{
+                background-color: rgb(240, 240, 240);
+            }}
+            #{self.objectName()}::pressed {{
+                background-color: rgb(220, 220, 220);
+            }}
+        """)
+
+        self.clicked.connect(func)
+        self.setFlat(True)
+        self.setFocusPolicy(QtCore.Qt.FocusPolicy(QtCore.Qt.NoFocus))
+
+    def ChangeSymbol(self, symbol):
+        self.setText(symbol)
+        self.symbol = symbol
+
+
+from pynput.keyboard import Key
+class VirtualKeyboard(QtWidgets.QWidget):
+    def __init__(self, parent, x: int, y: int, w: int, h: int, lenX = 13, lenY = 7, offset: tuple = (10, 10), fontSize: int = 15, fontFamily: str = "Trench"):
+        super(VirtualKeyboard, self).__init__(parent)
+
+        self.positions = [(i, j) for i in range(lenY) for j in range(lenX)]
+
+        self.currentLanguage = "ENG"
+
+        self.keyboard = Settings.KEYBOARDS[self.currentLanguage]
+
+        self.setGeometry(x, y, w, h);
+        self.setObjectName("VirtualKeyboard")
+        self.setAttribute(QtCore.Qt.WA_StyledBackground, True)
+        self.setStyleSheet(f"""
+            #{self.objectName()} {{
+                background-color: gray;
+                /*
+                background-image: url(Files/Images/UI/InformationBar_5X1.png);
+                background-repeat: no-repeat;
+                */
+            }}
+        """)
+
+        self.visibleRect = Rect(self, offset[0], offset[1], w - offset[0], h - offset[1])
+
+        self.gridLayout = QtWidgets.QGridLayout(self.visibleRect)
+        self.RegenerateKeyboard(True)
+
+    def RegenerateKeyboard(self, isRegenerate = False):
+        if (not isRegenerate):
+            for index in range(self.gridLayout.count()):
+                t_button = self.gridLayout.itemAt(index).widget()
+                t_button.ChangeSymbol(self.keyboard.KEYBOARD_SYMBOLS[index])
+        else:
+            for index in range(self.gridLayout.count()):
+                t_button = self.gridLayout.removeItem(self.gridLayout.itemAt(index))
+
+            for position, symbol in zip(self.positions, self.keyboard.KEYBOARD_SYMBOLS):
+                t_keyBoardButton = KeyboardButton(self, symbol, self.ClickKeyboardButton)
+                self.gridLayout.addWidget(t_keyBoardButton, *position)
+
+            # self.visibleRect.resize(self.gridLayout.totalMaximumSize())
+
+    def ClickKeyboardButton(self):
+        sender = self.sender()
+
+        if (sender.symbol == "Caps"):
+            self.keyboard.SwapCase(self.keyboard)
+            self.RegenerateKeyboard(True)
+        else:
+            if (sender.symbol == "<-"):
+                Settings.KEYBOARD_SIMULATOR.press(Key.backspace)
+                Settings.KEYBOARD_SIMULATOR.release(Key.backspace)
+            elif (sender.symbol == "Enter"):
+                Settings.KEYBOARD_SIMULATOR.press(Key.enter)
+                Settings.KEYBOARD_SIMULATOR.release(Key.enter)
+            else:
+                Settings.KEYBOARD_SIMULATOR.press(sender.symbol)
+                Settings.KEYBOARD_SIMULATOR.release(sender.symbol)
+

@@ -12,7 +12,7 @@ class MainMenu(Menu):
         self.setObjectName(self.name)
         self.setFixedSize(Settings.WINDOW_SIZE[0], Settings.WINDOW_SIZE[1])
 
-        self.move = DefaultButton_WithLine(self, "Move", 0, 72, 200, 128, "Move", lambda: print(1), imageName="move", color="rgb(221, 108, 43)")
+        self.move = DefaultButton_WithLine(self, "Move", 0, 72, 200, 128, "Move", lambda: parent.ChangeMenu("MovingMenu"), imageName="move", color="rgb(221, 108, 43)")
         self.toolChanger = DefaultButton_WithLine(self, "ToolChanger", 200, 72, 200, 128, "ToolChanger", lambda: print(1), imageName="toolchanger", color="rgb(162, 37, 124)")
         self.control = DefaultButton_WithLine(self, "Control", 400, 72, 200, 128, "Control", lambda: print(1), imageName="control", color="rgb(180, 223, 71)")
         self.system = DefaultButton_WithLine(self, "System", 600, 72, 200, 128, "System", lambda: print(1), imageName="info", color="rgb(64, 144, 131)")
