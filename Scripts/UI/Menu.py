@@ -361,6 +361,7 @@ class KeyboardButton(QtWidgets.QPushButton):
         self.setObjectName("KeyboardButton")
 
         self.symbol = symbol
+        if (self.symbol == ""): self.setHidden(True)
 
         self.setText(symbol)
 
@@ -398,11 +399,12 @@ class KeyboardButton(QtWidgets.QPushButton):
     def ChangeSymbol(self, symbol):
         self.setText(symbol)
         self.symbol = symbol
+        if (self.symbol == ""): self.setHidden(True)
 
 
 from pynput.keyboard import Key
 class VirtualKeyboard(QtWidgets.QWidget):
-    def __init__(self, parent, x: int, y: int, w: int, h: int, lenX = 13, lenY = 7, offset: tuple = (10, 10), fontSize: int = 15, fontFamily: str = "Trench"):
+    def __init__(self, parent, x: int, y: int, w: int, h: int, animationDuration: int = 500, lenX = 13, lenY = 7, offset: tuple = (10, 10), fontSize: int = 15, fontFamily: str = "Trench"):
         super(VirtualKeyboard, self).__init__(parent)
 
         self.positions = [(i, j) for i in range(lenY) for j in range(lenX)]
@@ -411,7 +413,8 @@ class VirtualKeyboard(QtWidgets.QWidget):
 
         self.keyboard = Settings.KEYBOARDS[self.currentLanguage]
 
-        self.setGeometry(x, y, w, h);
+        self.y, self.x, self.animationDuration = y, x, animationDuration
+        self.setGeometry(self.x, Settings.WINDOW_SIZE[1], w, h);
         self.setObjectName("VirtualKeyboard")
         self.setAttribute(QtCore.Qt.WA_StyledBackground, True)
         self.setStyleSheet(f"""
@@ -460,4 +463,18 @@ class VirtualKeyboard(QtWidgets.QWidget):
             else:
                 Settings.KEYBOARD_SIMULATOR.press(sender.symbol)
                 Settings.KEYBOARD_SIMULATOR.release(sender.symbol)
+
+    def PlayShowHideAnimation(self, hide: bool = False):
+        self.animation = QtCore.QPropertyAnimation(self, b"geometry")
+        self.animation.setDuration(self.animationDuration)
+        if (not hide):
+            self.animation.setStartValue(QtCore.QRect(self.x, Settings.WINDOW_SIZE[1], self.width(), self.height()))
+            # self.animation.setKeyValueAt()
+            self.animation.setEndValue(QtCore.QRect(self.x, self.y, self.width(), self.height()))
+        else:
+            self.animation.setStartValue(QtCore.QRect(self.x, self.y, self.width(), self.height()))
+            self.animation.setEndValue(QtCore.QRect(self.x, Settings.WINDOW_SIZE[1], self.width(), self.height()))
+
+        self.animation.start()
+
 

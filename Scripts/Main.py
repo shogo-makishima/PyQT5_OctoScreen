@@ -1,7 +1,7 @@
 from PyQt5 import QtGui, QtCore, QtWidgets
 import Scripts.Settings.Settings as Settings
 import asyncio
-from Scripts.UI.Menu import Menu
+from Scripts.UI.Menu import Menu, VirtualKeyboard
 from Scripts.UI.MainPage import MainPage
 from Scripts.UI.LedSwitch import LedSwitch
 from Scripts.UI.ColorScheme import ColorScheme
@@ -49,6 +49,10 @@ class Main(QtWidgets.QWidget):
         self.timer.start(Settings.UPDATE_PAUSE)
         self.timer.timeout.connect(lambda: self.UpdateChildMenu())
 
+        self.virtualKeyboard = VirtualKeyboard(self, 0, 290, 800, 300)
+        # self.virtualKeyboard.PlayShowHideAnimation(True)
+        # self.virtualKeyboard.setHidden(True)
+
         self.setStyleSheet("background-color: black;")
         # self.setStyleSheet("background-image: url(Files/Images/UI/Logo.png);")
 
@@ -57,21 +61,24 @@ class Main(QtWidgets.QWidget):
 
     def Start(self):
         OctoPrintAPI.Login(OctoPrintAPI)
-        OctoPrintAPI.GetProfiles(OctoPrintAPI)
-        OctoPrintAPI.LoadPresets(OctoPrintAPI)
+
+        if (OctoPrintAPI.b_isLogin):
+            OctoPrintAPI.GetProfiles(OctoPrintAPI)
+            OctoPrintAPI.LoadPresets(OctoPrintAPI)
 
         # OctoPrintAPI.GetSettings(OctoPrintAPI)
         self.UpdateState()
 
     def UpdateState(self):
-        if (not OctoPrintAPI.CheckConnection(OctoPrintAPI) in ["Connecting", "Close"]):
-            OctoPrintAPI.GetJob(OctoPrintAPI)
-        else: pass
+        if (OctoPrintAPI.b_isLogin):
+            if (not OctoPrintAPI.CheckConnection(OctoPrintAPI) in ["Connecting", "Close"]):
+                OctoPrintAPI.GetJob(OctoPrintAPI)
+            else: pass
 
-        # OctoPrintAPI.GetSettings(OctoPrintAPI)
-        OctoPrintAPI.GetAllFiles(OctoPrintAPI)
-        OctoPrintAPI.GetProfiles(OctoPrintAPI)
-        OctoPrintAPI.GetTemperaturePrinterState(OctoPrintAPI)
+            # OctoPrintAPI.GetSettings(OctoPrintAPI)
+            OctoPrintAPI.GetAllFiles(OctoPrintAPI)
+            OctoPrintAPI.GetProfiles(OctoPrintAPI)
+            OctoPrintAPI.GetTemperaturePrinterState(OctoPrintAPI)
 
         WiFiConnectionAPI.GetWifiNetworks(WiFiConnectionAPI)
 

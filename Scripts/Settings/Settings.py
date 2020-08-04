@@ -37,6 +37,7 @@ SELECTED_LANGUAGE = "ENG"
 
 class KeyboardSymbols:
     KEYBOARD_SYMBOLS: list = []
+    SPECIAL_SYMBOLS: list = ["Caps", "Enter"]
     UPPER_CASE: bool = False
 
     def SwapCase(self):
@@ -47,12 +48,12 @@ class KeyboardSymbols:
 
     def Upper(self):
         for i in range(len(self.KEYBOARD_SYMBOLS)):
-            if (self.KEYBOARD_SYMBOLS[i] not in ["Caps"]):
+            if (self.KEYBOARD_SYMBOLS[i] not in self.SPECIAL_SYMBOLS):
                 self.KEYBOARD_SYMBOLS[i] = self.KEYBOARD_SYMBOLS[i].upper()
 
     def Lower(self):
         for i in range(len(self.KEYBOARD_SYMBOLS)):
-            if (self.KEYBOARD_SYMBOLS[i] not in ["Caps"]):
+            if (self.KEYBOARD_SYMBOLS[i] not in self.SPECIAL_SYMBOLS):
                 self.KEYBOARD_SYMBOLS[i] = self.KEYBOARD_SYMBOLS[i].lower()
 
 class ENG_Keyboard(KeyboardSymbols):
@@ -69,9 +70,7 @@ class ENG_Keyboard(KeyboardSymbols):
         "0",
         "+",
         "-",
-        "=",
-        "*",
-        "_",
+        "Enter",
         "q",
         "w",
         "e",
@@ -82,6 +81,9 @@ class ENG_Keyboard(KeyboardSymbols):
         "i",
         "o",
         "p",
+        "[",
+        "]",
+        "<-",
         "a",
         "s",
         "d",
@@ -91,6 +93,10 @@ class ENG_Keyboard(KeyboardSymbols):
         "j",
         "k",
         "l",
+        ":",
+        "{",
+        "}",
+        "=",
         "z",
         "x",
         "c",
@@ -98,20 +104,19 @@ class ENG_Keyboard(KeyboardSymbols):
         "b",
         "n",
         "m",
-        "Caps",
-        "<-",
         ",",
         ".",
         "\\",
         "?",
-        "!",
-        ":",
         ";",
+        "Caps",
+        "!",
         "\"",
         "'",
         "|",
         "/",
-        "Enter",
+        "*",
+        "_",
     ]
 
 KEYBOARDS = {

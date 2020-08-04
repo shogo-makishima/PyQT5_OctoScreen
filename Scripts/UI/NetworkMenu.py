@@ -28,9 +28,6 @@ class NetworkMenu(Menu):
         self.passwordText.setEnabled(True)
         self.passwordText.setHidden(True)
 
-        self.virtualKeyboard = VirtualKeyboard(self, 0, 290, 800, 300)
-        self.virtualKeyboard.setHidden(True)
-
         # self.led = DefaultButton(self, "LedSwitch", 0, 0, 100, 100, "Led", lambda: parent.ChangeMenu("LedSwitch"))
         # self.color = DefaultButton(self, "ColorScheme", 100, 0, 100, 100, "Color", lambda: parent.ChangeMenu("ColorScheme"))
         # self.printFile = DefaultButton(self, "PrintFile", 200, 0, 100, 100, "Print", lambda: parent.ChangeMenu("PrintFile", OctoPrintAPI.JOB.state == "Operational"))
@@ -53,18 +50,24 @@ class NetworkMenu(Menu):
             self.networks.SetItems([wifi for wifi in WiFiConnectionAPI.WIFI])
 
     def SetWifi(self):
-        self.virtualKeyboard.setHidden(True)
+        # self.parent().virtualKeyboard.setHidden(True)
+        self.parent().virtualKeyboard.PlayShowHideAnimation(True)
         self.ssidText.setHidden(True)
         self.passwordText.setHidden(True)
 
+        WiFiConnectionAPI.ConnectWifi(WiFiConnectionAPI, self.ssidText.label.text(), self.passwordText.label.text())
+
+        self.passwordText.label.setText("")
+
+
     def ShowWifiConnectionSettings(self, signal):
-        self.virtualKeyboard.setHidden(False)
+        # self.parent().virtualKeyboard.setHidden(False)
+        self.parent().virtualKeyboard.PlayShowHideAnimation(False)
         self.ssidText.setHidden(False)
         self.passwordText.setHidden(False)
 
         network_ssid = self.networks.model.itemFromIndex(signal).text()
         self.ssidText.label.setText(network_ssid)
-        print(network_ssid)
 
     def Update(self):
         pass

@@ -158,16 +158,19 @@ class OctoPrintAPI:
 
     @Thread
     def Login(self) -> None:
-        data = {
-            "passive": True,
-            "user": self.User,
-            "pass": self.Password,
-            "remember": True
-        }
+        try:
+            data = {
+                "passive": True,
+                "user": self.User,
+                "pass": self.Password,
+                "remember": True
+            }
 
-        request = self.ConnectSession.post(f"{self.URL}/api/login", data=data)
-        self.b_isLogin = request.status_code == 200;
-        print("[Debug] Login Successful" if (request.status_code == 200) else "[Debug] Login Failed")
+            request = self.ConnectSession.post(f"{self.URL}/api/login", data=data)
+            self.b_isLogin = request.status_code == 200;
+            print("[Debug] Login Successful" if (request.status_code == 200) else "[Debug] Login Failed")
+        except Exception as exception:
+            print(f"[Debug] Login Failed with error: {exception}")
 
     @Thread
     def Logout(self) -> None:
