@@ -24,6 +24,9 @@ class NetworkMenu(Menu):
         self.ssidText.setEnabled(False)
         self.ssidText.setHidden(True)
 
+        self.cancelButton = DefaultButton_WithLine(self, "Cancel", 600, 100, 200, 128, "Cancel", lambda: self.SetPasswordMenu(True), imageName="back", color="rgb(180, 223, 71)")
+        self.cancelButton.setHidden(True)
+
         self.passwordText = TextEdit(self, 0, 180, 250, 50, "PASSWORD: null", funcEnterPressed=self.SetWifi)
         self.passwordText.setEnabled(True)
         self.passwordText.setHidden(True)
@@ -49,22 +52,24 @@ class NetworkMenu(Menu):
         if (len(WiFiConnectionAPI.WIFI) != 0):
             self.networks.SetItems([wifi for wifi in WiFiConnectionAPI.WIFI])
 
-    def SetWifi(self):
-        # self.parent().virtualKeyboard.setHidden(True)
-        self.parent().virtualKeyboard.PlayShowHideAnimation(True)
-        self.ssidText.setHidden(True)
-        self.passwordText.setHidden(True)
-
-        WiFiConnectionAPI.ConnectWifi(WiFiConnectionAPI, self.ssidText.label.text(), self.passwordText.label.text())
+    def SetPasswordMenu(self, state: bool):
+        self.parent().virtualKeyboard.PlayShowHideAnimation(state)
+        self.ssidText.setHidden(state)
+        self.passwordText.setHidden(state)
+        self.cancelButton.setHidden(state)
 
         self.passwordText.label.setText("")
+        self.ssidText.label.setText("")
+
+    def SetWifi(self):
+        # self.parent().virtualKeyboard.setHidden(True)
+        self.SetPasswordMenu(True)
+        WiFiConnectionAPI.ConnectWifi(WiFiConnectionAPI, self.ssidText.label.text(), self.passwordText.label.text())
 
 
     def ShowWifiConnectionSettings(self, signal):
         # self.parent().virtualKeyboard.setHidden(False)
-        self.parent().virtualKeyboard.PlayShowHideAnimation(False)
-        self.ssidText.setHidden(False)
-        self.passwordText.setHidden(False)
+        self.SetPasswordMenu(False)
 
         network_ssid = self.networks.model.itemFromIndex(signal).text()
         self.ssidText.label.setText(network_ssid)
